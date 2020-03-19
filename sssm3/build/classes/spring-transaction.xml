@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:tx="http://www.springframework.org/schema/tx"
+xmlns:aop="http://www.springframework.org/schema/aop"
+xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/aop
+http://www.springframework.org/schema/aop/spring-aop.xsd
+http://www.springframework.org/schema/tx
+http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	
+	<!-- 事务管理 -->
+	<bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 注入 -->
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 定义通知 -->
+	<tx:advice id="myadvice" transaction-manager="dataSourceTransactionManager">
+		<tx:attributes>
+			<tx:method name="del*" propagation="REQUIRED"/>
+		<tx:method name="upda*" propagation="REQUIRED"/>
+		<tx:method name="ins*" propagation="REQUIRED"/>
+		<tx:method name="get*" propagation="REQUIRED" read-only="true"/>
+		<tx:method name="sel*" propagation="REQUIRED" read-only="true"/>
+	</tx:attributes>
+	</tx:advice>
+	
+	<!-- aop -->
+        <aop:config >
+	<aop:pointcut expression="execution(* com.codeless.ssm001.service.*.*(..))" 
+				id="mycut"/>
+	<aop:advisor advice-ref="myadvice" pointcut-ref="mycut"/>
+	
+        </aop:config>
+</beans>
